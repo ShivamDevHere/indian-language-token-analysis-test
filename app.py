@@ -35,3 +35,10 @@ DETECTOR_LANGUAGES = {
     Language.TAMIL: "Tamil",
 }
 
+MODEL_OPTIONS = [
+    "Local NLLB-200",
+    "Gemini API",
+    "OpenAI API",
+    "Groq API",
+]
+
