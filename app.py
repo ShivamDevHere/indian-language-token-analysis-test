@@ -74,3 +74,17 @@ def translate_text(text, source, target, provider):
         f"Preserve the original meaning. Return only the translation:\n\n{text}"
     )
 
+    if provider == "Local NLLB-200":
+        tokenizer, model = load_local_model()
+        tokenizer.src_lang = source_code
+        inputs = tokenizer(text, return_tensors="pt")
+
+        with torch.no_grad():
+            output = model.generate(
+                **inputs,
+                forced_bos_token_id=tokenizer.convert_tokens_to_ids(target_code),
+                max_new_tokens=150,
+            )
+
+        return tokenizer.batch_decode(output, skip_special_tokens=True)[0]
+
