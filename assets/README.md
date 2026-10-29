@@ -22,6 +22,8 @@
 </p>
 
 ---
+## Problem Statement
+AI splits text into small pieces called tokens. Some Indian languages need more pieces, making answers slower and more expensive. Splitting can also hide harmful phrases from safety checks. Developers need to compare speed, cost and safety before choosing a model.
 
 ## 📌 About the Project
 
