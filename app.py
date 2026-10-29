@@ -246,3 +246,80 @@ if st.session_state.get("fallback_pending", False):
     time.sleep(1)
     st.rerun()
 
+# Run analysis one language at a time.
+if st.session_state.get("analysis_active", False):
+    try:
+        if not st.session_state.initialized:
+            with st.spinner("Detecting language..."):
+                tokenizer, detector = load_analysis_tools()
+                detected = detector.detect_language_of(
+                    st.session_state.analysis_text
+                )
+
+            if detected not in DETECTOR_LANGUAGES:
+                st.error("Language not supported or could not be detected.")
+                st.session_state.analysis_active = False
+                st.stop()
+
+            source = DETECTOR_LANGUAGES[detected]
+            st.session_state.source_language = source
+            st.session_state.initialized = True
+            st.success(f"Detected language: {source}")
+
+        tokenizer, _ = load_analysis_tools()
+        languages = list(LANGUAGES.keys())
+        index = st.session_state.next_index
+
+        if index < len(languages):
+            language = languages[index]
+            active_provider = st.session_state.active_provider
+            st.write(f"Progress: {index + 1}/{len(languages)} languages")
+
+            try:
+                start_translation = time.perf_counter()
+                translated = translate_with_timer(
+                    st.session_state.analysis_text,
+                    st.session_state.source_language,
+                    language,
+                    active_provider,
+                )
+                translation_time = time.perf_counter() - start_translation
+
+            except Exception as error:
+                if active_provider != "Local NLLB-200":
+                    st.session_state.failed_provider = active_provider
+                    st.session_state.fallback_error = str(error)
+                    st.session_state.fallback_deadline = time.time() + 7
+                    st.session_state.fallback_pending = True
+                    st.rerun()
+                else:
+                    raise
+
+            start_tokenization = time.perf_counter()
+            token_ids = tokenizer(
+                translated,
+                add_special_tokens=False,
+            )["input_ids"]
+            tokenization_time = time.perf_counter() - start_tokenization
+
+            st.session_state.results.append({
+                "Language": language,
+                "Translated Text": translated,
+                "Characters": len(translated),
+                "Tokens": len(token_ids),
+                "Tokenization Time (ms)": round(tokenization_time * 1000, 3),
+                "Translation Time (s)": round(translation_time, 3),
+                "Model Used": active_provider,
+            })
+
+            st.session_state.next_index += 1
+            st.rerun()
+
+        else:
+            st.session_state.analysis_active = False
+            st.success("Analysis completed!")
+
+    except Exception as error:
+        st.error(f"Analysis failed: {error}")
+        st.session_state.analysis_active = False
+
