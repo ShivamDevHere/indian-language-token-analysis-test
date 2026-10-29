@@ -42,3 +42,23 @@ MODEL_OPTIONS = [
     "Groq API",
 ]
 
+executor = ThreadPoolExecutor(max_workers=2)
+
+
+@st.cache_resource
+def load_analysis_tools():
+    tokenizer = AutoTokenizer.from_pretrained("google/muril-base-cased")
+    detector = LanguageDetectorBuilder.from_languages(
+        *DETECTOR_LANGUAGES.keys()
+    ).build()
+    return tokenizer, detector
+
+
+@st.cache_resource
+def load_local_model():
+    model_name = "facebook/nllb-200-distilled-600M"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    return tokenizer, model
+
+
