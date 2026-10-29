@@ -88,3 +88,20 @@ def translate_text(text, source, target, provider):
 
         return tokenizer.batch_decode(output, skip_special_tokens=True)[0]
 
+    if provider == "Gemini API":
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise ValueError("Add GEMINI_API_KEY to your .env file.")
+
+        client = genai.Client(
+            api_key=api_key,
+            http_options={"timeout": 15000},
+        )
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+        )
+        if not response.text:
+            raise ValueError("Gemini returned an empty response.")
+        return response.text.strip()
+
