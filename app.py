@@ -323,3 +323,41 @@ if st.session_state.get("analysis_active", False):
         st.error(f"Analysis failed: {error}")
         st.session_state.analysis_active = False
 
+# Display results after all translations are completed.
+if (
+    not st.session_state.get("analysis_active", False)
+    and not st.session_state.get("fallback_pending", False)
+    and st.session_state.get("results")
+):
+    df = pd.DataFrame(st.session_state.results)
+
+    st.subheader("Translations")
+    for _, row in df.iterrows():
+        with st.expander(row["Language"], expanded=True):
+            st.write(row["Translated Text"])
+            st.caption(f"Model: {row['Model Used']}")
+
+    st.subheader("Token Analysis")
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Languages", len(df))
+    col2.metric("Total tokens", int(df["Tokens"].sum()))
+    col3.metric(
+        "Total translation time",
+        f"{df['Translation Time (s)'].sum():.2f} s",
+    )
+
+    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.subheader("Token Count Comparison")
+    st.bar_chart(df.set_index("Language")["Tokens"])
+
+    st.download_button(
+        "Download CSV",
+        df.to_csv(index=False).encode("utf-8-sig"),
+        file_name="language_token_analysis.csv",
+        mime="text/csv",
+    )
+
+    st.caption(
+        "Translation time includes API/network latency for cloud models. "
+        "Tokenization uses MuRIL for every translation. API costs are not calculated."
+    )
