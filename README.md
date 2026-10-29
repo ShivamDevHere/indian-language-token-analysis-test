@@ -1,76 +1,128 @@
 # 🔤 Indian Language Token Analysis
 
-A Streamlit-based application that detects Indian languages, translates text, and compares tokenization across **English, Hindi, Bengali, and Tamil** using NLP models.
+<p align="center">
+  <b>Multilingual Translation & Tokenization Analysis Using NLP</b>
+</p>
 
-## 🚀 Features
+<p align="center">
+  Detect the input language, translate text into English, Hindi, Bengali, and Tamil, and compare token counts and processing time using local and cloud-based models.
+</p>
 
-- **Language Detection:** Automatically identifies the input language.
-- **Multi-Language Translation:** Translates text into four supported languages.
-- **Multiple Translation Models:** Choose Local NLLB-200, Gemini API, or OpenAI API.
-- **Token Analysis:** Counts tokens using the MuRIL tokenizer.
-- **Performance Measurement:** Measures translation and tokenization time.
-- **Live Timer:** Displays elapsed time during cloud translation.
-- **Automatic Fallback:** Switches to Local NLLB-200 if a cloud request fails or times out.
-- **Interactive Dashboard:** Displays translations, token counts, and performance metrics.
-- **CSV Export:** Download analysis results for further examination.
+<p align="center">
+  <a href="https://indian-language-token-analysis-test.streamlit.app/">🚀 Live Demo</a> •
+  <a href="https://github.com/ShivamDevHere/indian-language-token-analysis-test">💻 Source Code</a> •
+  <a href="https://github.com/ShivamDevHere">👨‍💻 My GitHub</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit"/>
+  <img src="https://img.shields.io/badge/NLP-Multilingual-blue?style=for-the-badge" alt="NLP"/>
+  <img src="https://img.shields.io/badge/Hugging%20Face-Transformers-yellow?style=for-the-badge&logo=huggingface&logoColor=black" alt="Hugging Face"/>
+</p>
+
+---
+
+## 📌 About the Project
+
+**Indian Language Token Analysis** is an NLP application that detects the language of input text, translates it into four supported languages, and analyzes the resulting text using the MuRIL tokenizer.
+
+Supported languages:
+
+- **English**
+- **Hindi**
+- **Bengali**
+- **Tamil**
+
+The application supports local translation with NLLB-200 and cloud-based translation through Gemini, OpenAI, and Groq APIs.
+
+## ✨ Key Features
+
+- 🌐 **Language Detection** — Identifies the input language automatically.
+- 🔄 **Multilingual Translation** — Translates text into four supported languages.
+- 🧠 **Multiple AI Providers** — Supports NLLB-200, Gemini, OpenAI, and Groq.
+- 🔢 **Token Analysis** — Counts tokens using the MuRIL tokenizer.
+- ⏱️ **Performance Measurement** — Records translation and tokenization time.
+- ⚡ **Automatic Fallback** — Offers switching to local translation when a cloud request fails.
+- 📊 **Interactive Dashboard** — Displays translations, metrics, and token comparisons.
+- 📥 **CSV Export** — Downloads analysis results for further examination.
 
 ## 🛠️ Tech Stack
 
 | Technology | Purpose |
 |---|---|
-| Python | Core programming language |
+| Python | Core programming |
 | Streamlit | Web application interface |
 | Lingua | Language detection |
-| Hugging Face Transformers | NLP models and tokenization |
+| Hugging Face Transformers | Model loading and tokenization |
 | NLLB-200 | Local machine translation |
-| MuRIL | Tokenization for Indian languages |
+| MuRIL | Tokenization of translated text |
 | PyTorch | Deep learning inference |
-| Pandas | Results processing and tabular analysis |
+| Pandas | Data processing and analysis |
 | Gemini API | Cloud-based translation |
 | OpenAI API | Cloud-based translation |
+| Groq API | Cloud-based translation |
 
 ## 🧠 Models Used
 
 ### 1. NLLB-200
-- Model: `facebook/nllb-200-distilled-600M`
+
+- **Model:** `facebook/nllb-200-distilled-600M`
 - Performs translation locally.
-- Does not require paid API access.
+- Does not require cloud API credentials.
 - Requires downloading the model and sufficient system memory.
 
 ### 2. MuRIL
-- Model: `google/muril-base-cased`
-- Tokenizes the translated text.
-- Helps compare token counts across supported languages.
 
-### 3. Gemini API
-- Uses Google's Gemini models for cloud translation.
-- Requires a valid API key and available quota.
+- **Model:** `google/muril-base-cased`
+- Tokenizes translated text.
+- Enables token-count comparisons across supported languages.
 
-### 4. OpenAI API
-- Uses OpenAI's API for cloud translation.
-- Requires a valid API key and available API billing or credits.
+### 3. Cloud Translation APIs
 
-### 5. Groq API
-- Uses Groq's API for cloud translation.
-- Requires a valid API key and available API freely.
+- **Gemini API** — Google's generative AI models.
+- **OpenAI API** — OpenAI's language models.
+- **Groq API** — Language models served through Groq's API.
 
-## ⚙️ Installation
+Cloud providers require valid API keys, and availability depends on model access, quotas, and account limits.
+
+## ⚙️ How It Works
+
+```text
+User Input
+    ↓
+Language Detection (Lingua)
+    ↓
+Select Translation Provider
+    ↓
+Translate into English, Hindi, Bengali, and Tamil
+    ↓
+Tokenization using MuRIL
+    ↓
+Measure Translation and Tokenization Time
+    ↓
+Display Results and Comparison Chart
+    ↓
+Export Results as CSV
+```
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - Python 3.10 or newer
 - Git
-- Internet connection for installation and model downloads
-- API keys only if using Gemini or OpenAI
+- Internet connection for installing dependencies and downloading models
+- API keys for the cloud providers you want to use
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/ShivamDevHere/indian-language-token-analysis-test.git
 cd indian-language-token-analysis-test
 ```
 
-### 2. Create a virtual environment
+### 2. Create a Virtual Environment
 
 ```bash
 python -m venv venv
@@ -82,31 +134,33 @@ Activate it on Windows:
 venv\Scripts\activate
 ```
 
-### 3. Install dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure API keys (optional)
+### 4. Configure API Keys
 
 Create a `.env` file in the project root:
 
 ```env
 GEMINI_API_KEY=your_gemini_api_key
 OPENAI_API_KEY=your_openai_api_key
+GROQ_API_KEY=your_groq_api_key
 ```
 
-Get API access from:
+Get API keys from:
 
 - [Google AI Studio](https://aistudio.google.com/)
 - [OpenAI Platform](https://platform.openai.com/)
-- [Groq Platform](https://console.groq.com/)
-- 
+- [Groq Console](https://console.groq.com/)
 
-**Security:** Never commit your `.env` file or expose API keys publicly.
+For Streamlit Community Cloud, configure these keys in your app's **Settings → Secrets** instead of uploading the `.env` file.
 
-### 5. Run the application
+**Security:** Never commit API keys or your `.env` file to GitHub.
+
+### 5. Run the Application
 
 ```bash
 streamlit run app.py
@@ -114,82 +168,55 @@ streamlit run app.py
 
 The application will open in your browser.
 
-## 📖 How to Use
-
-1. Enter text in English, Hindi, Bengali, or Tamil.
-2. Select a translation model.
-3. Click **Analyze**.
-4. View the detected source language and translations.
-5. Compare token counts, translation time, and tokenization time.
-6. View the token-count comparison chart.
-7. Download the results as a CSV file.
-
-If a cloud translation request fails, the application provides a fallback option to use Local NLLB-200.
+> **NOTE:** If a cloud translation request fails, the application offers a fallback to Local NLLB-200.
 
 ## 📊 Analysis Metrics
 
 | Metric | Description |
 |---|---|
 | Characters | Number of characters in the translated text |
-| Tokens | Number of tokens produced by the MuRIL tokenizer |
-| Translation Time | Time taken to produce a translation |
-| Tokenization Time | Time taken to tokenize the translated text |
-| Model Used | Translation model used for the result |
+| Tokens | Number of tokens produced by MuRIL |
+| Translation Time | Time taken to generate a translation |
+| Tokenization Time | Time taken to tokenize translated text |
+| Model Used | Translation provider used for the result |
 
-**Note:** Token counts depend on the tokenizer. MuRIL token counts are not necessarily comparable to the token counts billed by Gemini or OpenAI. Cloud translation time includes network and API latency.
+> **Note:** Token counts depend on the tokenizer. MuRIL token counts are not necessarily comparable to tokens billed by cloud APIs. Translation time includes API and network latency for cloud providers.
 
-## 🏗️ Project Workflow
-
-```text
-User Input
-    ↓
-Language Detection (Lingua)
-    ↓
-Select Translation Model
-    ↓
-Translate into English, Hindi, Bengali, and Tamil
-    ↓
-Tokenization using MuRIL
-    ↓
-Measure Processing Time
-    ↓
-Display Results and Comparison Chart
-    ↓
-Export Results as CSV
-```
-
-## 📁 Project Structure
+## 📂 Project Structure
 
 ```text
 indian-language-token-analysis/
-│
-├── app.py              # Streamlit application
-├── requirements.txt    # Python dependencies
-├── .env                # API keys (not committed)
-├── .gitignore          # Files excluded from Git
-└── README.md           # Project documentation
+├── app.py
+├── requirements.txt
+├── .env
+├── .gitignore
+└── README.md
 ```
 
-## 🔐 Environment and API Notes
+## 🌐 Project Links
 
-- Local NLLB-200 works without cloud API credentials.
-- Gemini and OpenAI depend on API availability, quota, and account configuration.
-- Cloud requests have timeout handling; local inference may take longer on the first run.
-- API pricing and free-tier limits may change.
-- The application measures translation and tokenization performance; it does not currently calculate actual API charges.
+- 🚀 **Live Demo:** [Open Application](https://indian-language-token-analysis-test.streamlit.app/)
+- 💻 **Source Code:** [GitHub Repository](https://github.com/ShivamDevHere/indian-language-token-analysis-test)
+- 👨‍💻 **GitHub Profile:** [@ShivamDevHere](https://github.com/ShivamDevHere)
 
 ## 🎯 Project Objective
 
-To explore multilingual NLP by comparing translation performance and tokenization across four languages, while providing a simple interface for experimenting with local and cloud-based translation models.
+To explore multilingual NLP by analyzing translation outputs, token counts, and processing performance across four languages using local and cloud-based translation models.
 
 ## 👨‍💻 Author
 
 **Shivam Srivastava**
 
-- GitHub: [ShivamDevHere](https://github.com/ShivamDevHere)
-- LinkedIn: [shivamdevhere](https://linkedin.com/in/shivamdevhere)
-- Portfolio: [Visit Portfolio](https://portfolio-ruby-one-66.vercel.app/)
+- GitHub: [@ShivamDevHere](https://github.com/ShivamDevHere)
+- LinkedIn: [Connect with me](https://linkedin.com/in/shivamdevhere)
+- Portfolio: [Visit My Portfolio](https://portfolio-ruby-one-66.vercel.app/)
 
 ---
 
-*Built to explore multilingual NLP, machine translation, and tokenization analysis.*
+<p align="center">
+  ⭐ If you find this project useful, consider giving it a star!
+</p>
+
+<p align="center">
+  <i>Built to explore multilingual NLP, machine translation, and tokenization analysis.</i>
+</p>

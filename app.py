@@ -36,10 +36,10 @@ DETECTOR_LANGUAGES = {
 }
 
 MODEL_OPTIONS = [
+    "Groq API",
     "Local NLLB-200",
     "Gemini API",
     "OpenAI API",
-    "Groq API",
 ]
 
 executor = ThreadPoolExecutor(max_workers=2)
