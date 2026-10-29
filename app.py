@@ -123,3 +123,25 @@ def translate_text(text, source, target, provider):
             raise ValueError("OpenAI returned an empty response.")
         return response.output_text.strip()
 
+    if provider == "Groq API":
+        api_key = os.getenv("GROQ_API_KEY")
+        if not api_key:
+            raise ValueError("Add GROQ_API_KEY to your .env file.")
+
+        client = Groq(
+            api_key=api_key,
+            timeout=15.0,
+            max_retries=0,
+        )
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            messages=[{"role": "user", "content": prompt}],
+        )
+        result = response.choices[0].message.content
+        if not result:
+            raise ValueError("Groq returned an empty response.")
+        return result.strip()
+
+    raise ValueError("Unsupported model selected.")
+
+
