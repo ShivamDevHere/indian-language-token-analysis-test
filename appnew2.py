@@ -110,6 +110,20 @@ MODEL_OPTIONS = [
 
 executor = ThreadPoolExecutor(max_workers=2)
 
+# Standard paid-tier text API rates in USD per 1 million tokens.
+# Gemini may be free depending on the user's API tier; local inference has no API charge.
+MODEL_PRICING = {
+    "Gemini API": {"input": 0.30, "output": 2.50, "model": "gemini-2.5-flash"},
+    "OpenAI API": {"input": 0.40, "output": 1.60, "model": "gpt-4.1-mini"},
+    "Groq API": {"input": 0.15, "output": 0.60, "model": "openai/gpt-oss-120b"},
+}
+
+def estimate_api_cost(provider, input_tokens, output_tokens):
+    rates = MODEL_PRICING.get(provider)
+    if not rates:
+        return 0.0
+    return (input_tokens * rates["input"] + output_tokens * rates["output"]) / 1_000_000
+
 @st.cache_resource
 
 def load_analysis_tools():
@@ -140,7 +154,7 @@ def translate_text(text, source, target, provider):
 
     if source == target:
 
-        return text
+        return text, 0, 0
 
     source_code = LANGUAGES[source][0]
 
@@ -174,7 +188,7 @@ def translate_text(text, source, target, provider):
 
             )
 
-        return tokenizer.batch_decode(output, skip_special_tokens=True)[0]
+        return tokenizer.batch_decode(output, skip_special_tokens=True)[0], 0, 0
 
     if provider == "Gemini API":
 
@@ -480,7 +494,7 @@ if st.session_state.get("analysis_active", False):
 
                 start_translation = time.perf_counter()
 
-                translated = translate_with_timer(
+                translated, input_tokens, output_tokens = translate_with_timer(
 
                     st.session_state.analysis_text,
 
@@ -493,6 +507,9 @@ if st.session_state.get("analysis_active", False):
                 )
 
                 translation_time = time.perf_counter() - start_translation
+                estimated_cost = estimate_api_cost(
+                    active_provider, input_tokens, output_tokens
+                )
 
             except Exception as error:
 
@@ -539,6 +556,9 @@ if st.session_state.get("analysis_active", False):
                 "Translation Time (s)": round(translation_time, 3),
 
                 "Model Used": active_provider,
+                "Input API Tokens": input_tokens,
+                "Output API Tokens": output_tokens,
+                "Estimated Cost (USD)": estimated_cost,
 
             })
 
@@ -584,7 +604,7 @@ if (
 
     st.subheader("📊 Token Analysis")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     col1.metric("Languages", len(df))
 
@@ -597,6 +617,19 @@ if (
         f"{df['Translation Time (s)'].sum():.2f} s",
 
     )
+
+    total_cost = float(df["Estimated Cost (USD)"].sum())
+    col4.metric("Estimated API cost", f"${total_cost:.6f}")
+
+    st.caption(
+        "Cost is estimated from token usage returned by the API and standard paid-tier rates. "
+        "Gemini may be free on your API tier. Local NLLB-200 shows $0 API cost; electricity/compute costs are excluded."
+    )
+
+    with st.expander("💵 Cost breakdown by language"):
+        cost_df = df[["Language", "Model Used", "Input API Tokens", "Output API Tokens", "Estimated Cost (USD)"]].copy()
+        cost_df["Estimated Cost (USD)"] = cost_df["Estimated Cost (USD)"].map(lambda value: f"${value:.8f}")
+        st.dataframe(cost_df, use_container_width=True, hide_index=True)
 
     st.dataframe(df, use_container_width=True, hide_index=True)
 
