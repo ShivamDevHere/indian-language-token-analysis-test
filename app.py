@@ -145,3 +145,29 @@ def translate_text(text, source, target, provider):
     raise ValueError("Unsupported model selected.")
 
 
+def translate_with_timer(text, source, target, provider):
+    if provider == "Local NLLB-200":
+        return translate_text(text, source, target, provider)
+
+    status = st.empty()
+    start = time.perf_counter()
+    future = executor.submit(translate_text, text, source, target, provider)
+
+    try:
+        while not future.done():
+            elapsed = int(time.perf_counter() - start)
+            status.info(f"Translating with {provider}... {elapsed}s")
+
+            if elapsed >= 20:
+                future.cancel()
+                raise TimeoutError(f"{provider} exceeded the 20-second limit.")
+
+            time.sleep(0.25)
+
+        result = future.result()
+        status.empty()
+        return result
+    except Exception:
+        status.empty()
+        raise
+
