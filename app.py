@@ -13,4 +13,10 @@ from google import genai
 from openai import OpenAI
 from groq import Groq
 
+load_dotenv()
 
+st.set_page_config(
+    page_title="Indian Language Token Analysis",
+    page_icon="🔤",
+    layout="wide",
+)
