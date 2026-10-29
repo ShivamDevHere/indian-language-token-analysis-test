@@ -62,3 +62,11 @@ def load_local_model():
     return tokenizer, model
 
 
+def translate_text(text, source, target, provider):
+    if source == target:
+        return text
+
+    source_code = LANGUAGES[source][0]
+    target_code, target_name = LANGUAGES[target]
+
+
