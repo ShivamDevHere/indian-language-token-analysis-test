@@ -20,3 +20,18 @@ st.set_page_config(
     page_icon="🔤",
     layout="wide",
 )
+
+LANGUAGES = {
+    "English": ("eng_Latn", "English"),
+    "Hindi": ("hin_Deva", "Hindi"),
+    "Bengali": ("ben_Beng", "Bengali"),
+    "Tamil": ("tam_Taml", "Tamil"),
+}
+
+DETECTOR_LANGUAGES = {
+    Language.ENGLISH: "English",
+    Language.HINDI: "Hindi",
+    Language.BENGALI: "Bengali",
+    Language.TAMIL: "Tamil",
+}
+
