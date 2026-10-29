@@ -105,3 +105,21 @@ def translate_text(text, source, target, provider):
             raise ValueError("Gemini returned an empty response.")
         return response.text.strip()
 
+    if provider == "OpenAI API":
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("Add OPENAI_API_KEY to your .env file.")
+
+        client = OpenAI(
+            api_key=api_key,
+            timeout=15.0,
+            max_retries=0,
+        )
+        response = client.responses.create(
+            model="gpt-4.1-mini",
+            input=prompt,
+        )
+        if not response.output_text:
+            raise ValueError("OpenAI returned an empty response.")
+        return response.output_text.strip()
+
