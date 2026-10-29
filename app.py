@@ -69,4 +69,8 @@ def translate_text(text, source, target, provider):
     source_code = LANGUAGES[source][0]
     target_code, target_name = LANGUAGES[target]
 
+    prompt = (
+        f"Translate the following text from {source} to {target_name}. "
+        f"Preserve the original meaning. Return only the translation:\n\n{text}"
+    )
 
