@@ -171,3 +171,78 @@ def translate_with_timer(text, source, target, provider):
         status.empty()
         raise
 
+
+def reset_analysis(text, provider):
+    st.session_state.analysis_active = True
+    st.session_state.analysis_text = text
+    st.session_state.active_provider = provider
+    st.session_state.results = []
+    st.session_state.next_index = 0
+    st.session_state.initialized = False
+    st.session_state.fallback_pending = False
+    st.session_state.fallback_deadline = None
+    st.session_state.fallback_error = ""
+    st.session_state.failed_provider = ""
+
+
+st.title("Indian Language Token Analysis")
+st.write("Translate and compare tokenization across four languages.")
+
+text = st.text_area(
+    "Enter text in English, Hindi, Bengali, or Tamil",
+    placeholder="Type your sentence here...",
+    height=120,
+)
+
+col1, col2 = st.columns([2, 1])
+with col1:
+    analyze = st.button("Analyze", type="primary", use_container_width=True)
+with col2:
+    provider = st.selectbox(
+        "Translation model",
+        MODEL_OPTIONS,
+        label_visibility="collapsed",
+    )
+
+if analyze:
+    if not text.strip():
+        st.warning("Please enter some text.")
+        st.stop()
+    reset_analysis(text.strip(), provider)
+
+# Handle cloud API failure and fallback countdown.
+if st.session_state.get("fallback_pending", False):
+    remaining = math.ceil(st.session_state.fallback_deadline - time.time())
+
+    st.error(
+        f"{st.session_state.failed_provider} failed: "
+        f"{st.session_state.fallback_error}"
+    )
+    st.warning(
+        f"Switching to Local NLLB-200 in {max(0, remaining)} seconds..."
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        switch_now = st.button("Switch now", use_container_width=True)
+    with col2:
+        retry = st.button("Retry selected model", use_container_width=True)
+
+    if switch_now:
+        st.session_state.active_provider = "Local NLLB-200"
+        st.session_state.fallback_pending = False
+        st.rerun()
+
+    if retry:
+        st.session_state.active_provider = st.session_state.failed_provider
+        st.session_state.fallback_pending = False
+        st.rerun()
+
+    if remaining <= 0:
+        st.session_state.active_provider = "Local NLLB-200"
+        st.session_state.fallback_pending = False
+        st.rerun()
+
+    time.sleep(1)
+    st.rerun()
+
